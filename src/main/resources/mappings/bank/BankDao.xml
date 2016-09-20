@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdzy.bk.modules.yy.bank.dao.BankBeanDao">
+
+	<sql id="bankBeanColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.persion AS "persion",
+		a.phone AS "phone",
+		a.create_date AS "createDate",
+		a.del_status AS "delStatus",
+		a.upd_date AS "updDate"
+	</sql>
+
+	<sql id="bankBeanJoins">
+	</sql>
+
+	<select id="get" resultType="BankBean">
+		SELECT
+		<include refid="bankBeanColumns"/>
+		FROM yy_bank_info a
+		<include refid="bankBeanJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="BankBean">
+		SELECT
+		<include refid="bankBeanColumns"/>
+		FROM yy_bank_info a
+		<include refid="bankBeanJoins"/>
+		<where>
+			a.del_status = 0
+			<if test="name != null and name != ''">
+				AND a.name LIKE concat('%',#{name},'%')
+			</if>
+			<if test="persion != null and persion != ''">
+				AND a.persion = #{persion}
+			</if>
+			<if test="phone != null and phone != ''">
+				AND a.phone = #{phone}
+			</if>
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+		</where>
+		ORDER BY a.create_date DESC
+	</select>
+
+	<insert id="insert">
+		INSERT INTO yy_bank_info(
+		id,
+		name,
+		persion,
+		phone,
+		create_date,
+		del_status,
+		upd_date
+		) VALUES (
+		#{id},
+		#{name},
+		#{persion},
+		#{phone},
+		#{createDate},
+		#{delStatus},
+		#{updDate}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE yy_bank_info
+		<set>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="persion != null and persion != ''">
+				persion = #{persion},
+			</if>
+			<if test="phone != null and phone != ''">
+				phone = #{phone},
+			</if>
+			<if test="updDate != null">
+				upd_date = #{updDate}
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+
+	<update id="delete">
+		UPDATE yy_bank_info SET del_status = 1
+		WHERE id = #{id}
+	</update>
+
+</mapper>

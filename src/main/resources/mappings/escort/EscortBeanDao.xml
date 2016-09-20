@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdzy.bk.modules.yy.escort.dao.EscortBeanDao">
+    
+	<sql id="escortBeanColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.idcard AS "idcard",
+		a.phone AS "phone",
+		a.card_no AS "cardNo",
+		a.img_url AS "imgUrl",
+		a.bank_id AS "bankId",
+		a.create_date AS "createDate",
+		a.create_date AS "yyDate",
+		a.del_status AS "delStatus",
+		a.upd_date AS "updDate",
+		b.name AS bankName
+	</sql>
+	
+	<sql id="escortBeanJoins">
+		LEFT JOIN yy_bank_info b ON a.bank_id = b.id
+	</sql>
+    
+	<select id="get" resultType="EscortBean">
+		SELECT 
+			<include refid="escortBeanColumns"/>
+		FROM yy_escort a
+		<include refid="escortBeanJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="EscortBean">
+		SELECT 
+			<include refid="escortBeanColumns"/>
+		FROM yy_escort a
+		<include refid="escortBeanJoins"/>
+		<where>
+			a.del_status = 0
+			<if test="name != null and name != ''">
+				AND a.name LIKE concat('%',#{name},'%')
+			</if>
+			<if test="bankId != null and bankId != ''">
+				AND bank_id = #{bankId}
+			</if>
+		</where>
+		ORDER BY a.create_date DESC
+	</select>
+
+	<insert id="insert">
+		INSERT INTO yy_escort(
+			id,
+			`name`,
+			idcard,
+			phone,
+			card_no,
+			img_url,
+			bank_id,
+			create_date,
+			del_status,
+			upd_date
+		) VALUES (
+			#{id},
+			#{name},
+			#{idcard},
+			#{phone},
+			#{cardNo},
+			#{imgUrl},
+			#{bankId},
+			#{createDate},
+			#{delStatus},
+			#{updDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE yy_escort
+		<set>
+			<if test="name != null and name != ''">
+				`name` = #{name},
+			</if>
+			<if test="name != null and name != ''">
+				`name` = #{name},
+			</if>
+			<if test="idcard != null and idcard != ''">
+				`idcard` = #{idcard},
+			</if>
+			<if test="phone != null and phone != ''">
+				`phone` = #{phone},
+			</if>
+			<if test="cardNo != null and cardNo != ''">
+				`card_no` = #{cardNo},
+			</if>
+			<if test="imgUrl != null and imgUrl != ''">
+				`img_url` = #{imgUrl},
+			</if>
+			<if test="bankId != null and bankId != ''">
+				`bank_id` = #{bankId},
+			</if>
+			<if test="updDate != null">
+				`upd_date` = #{updDate},
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE yy_escort SET del_status = 1
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

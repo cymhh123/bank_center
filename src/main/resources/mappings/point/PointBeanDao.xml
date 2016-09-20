@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdzy.bk.modules.yh.point.dao.PointBeanDao">
+    
+	<sql id="pointBeanColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.address AS "address",
+		a.phone AS "phone",
+		a.persion AS "persion",
+		a.device_no AS "deviceNo",
+		a.create_date AS "createDate",
+		a.upd_date AS "updDate",
+		a.del_status AS "delStatus"
+	</sql>
+	
+	<sql id="pointBeanJoins">
+	</sql>
+    
+	<select id="get" resultType="PointBean">
+		SELECT 
+			<include refid="pointBeanColumns"/>
+		FROM yh_point a
+		<include refid="pointBeanJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PointBean">
+		SELECT 
+			<include refid="pointBeanColumns"/>
+		FROM yh_point a
+		<include refid="pointBeanJoins"/>
+		<where>
+			a.del_status = 0
+			<if test="name != null and name != ''">
+				AND a.name LIKE concat('%',#{name},'%')
+			</if>
+			<if test="deviceNo != null and deviceNo != ''">
+				AND a.device_no = #{deviceNo}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO yh_point(
+			id,
+			name,
+			address,
+			phone,
+			persion,
+			device_no,
+			create_date,
+			upd_date,
+			del_status
+		) VALUES (
+			#{id},
+			#{name},
+			#{address},
+			#{phone},
+			#{persion},
+			#{deviceNo},
+			#{createDate},
+			#{updDate},
+			#{delStatus}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE yh_point
+		<set>
+			<if test="name != null and name != ''">
+				`name` = #{name},
+			</if>
+			<if test="address != null and address != ''">
+				`address` = #{address},
+			</if>
+			<if test="phone != null and phone != ''">
+				`phone` = #{phone},
+			</if>
+			<if test="persion != null and persion != ''">
+				`persion` = #{persion},
+			</if>
+			<if test="deviceNo != null and deviceNo != ''">
+				`device_no` = #{deviceNo},
+			</if>
+			<if test="updDate != null">
+				`upd_date` = #{updDate},
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE yh_point SET del_status = 1
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

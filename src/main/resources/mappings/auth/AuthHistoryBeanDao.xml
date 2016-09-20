@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdzy.bk.modules.yh.auth.dao.AuthHistoryBeanDao">
+    
+	<sql id="authHistoryBeanColumns">
+		a.id AS "id",
+		a.persion AS "persion",
+		a.card_no AS "cardNo",
+		a.point_name AS "pointName",
+		a.device_no AS "deviceNo",
+		a.status AS "status",
+		a.tip_status AS "tipStatus",
+		a.create_date AS "createDate",
+		a.del_status AS "delStatus",
+		a.img_url AS imgUrl
+	</sql>
+	
+	<sql id="authHistoryBeanJoins">
+	</sql>
+    
+	<select id="get" resultType="AuthHistoryBean">
+		SELECT 
+			<include refid="authHistoryBeanColumns"/>
+		FROM yh_auth_history a
+		<include refid="authHistoryBeanJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="AuthHistoryBean">
+		SELECT 
+			<include refid="authHistoryBeanColumns"/>
+		FROM yh_auth_history a
+		<include refid="authHistoryBeanJoins"/>
+		<where>
+			a.del_status=0
+			<if test="persion != null and persion != ''">
+				AND a.persion LIKE concat('%',#{persion},'%')
+			</if>
+			<if test="createDate != null">
+				AND DATE(a.create_date) = CURRENT_DATE()
+			</if>
+			<if test="tipStatus != null">
+				AND a.tip_status = #{tipStatus}
+			</if>
+		</where>
+		ORDER BY a.create_date DESC
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO yh_auth_history(
+			id,
+			persion,
+			card_no,
+			point_name,
+			device_no,
+			status,
+			tip_status,
+			create_date,
+			del_status,
+			img_url
+		) VALUES (
+			#{id},
+			#{persion},
+			#{cardNo},
+			#{pointName},
+			#{deviceNo},
+			#{status},
+			#{tipStatus},
+			#{createDate},
+			#{delStatus},
+			#{imgUrl}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE yh_auth_history
+		 <set>
+			 <if test="tipStatus != null">
+				 tip_status = #{tipStatus},
+			 </if>
+		 </set>
+		<where>
+			id IN 
+			<foreach collection="ids" item="id" separator="," open="(" close=")">
+				#{id}
+			</foreach>
+			<if test="createDate != null">
+				AND DATE(create_date) = CURRENT_DATE()
+			</if>
+		</where>
+	</update>
+
+	<update id="batchUpdTipStatus">
+		UPDATE yh_auth_history SET tip_status = 1
+		<where>
+			id IN
+			<foreach collection="list" item="item" separator="," open="(" close=")">
+				#{item.id}
+			</foreach>
+		</where>
+	</update>
+
+	<update id="delete">
+		UPDATE yh_auth_history SET del_status = 1
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

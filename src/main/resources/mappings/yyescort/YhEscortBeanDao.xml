@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdzy.bk.modules.yh.yhescort.dao.YhEscortBeanDao">
+    
+	<sql id="yhEscortBeanColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.idcard AS "idcard",
+		a.phone AS "phone",
+		a.card_no AS "cardNo",
+		a.img_url AS "imgUrl",
+		a.bank_id AS "bankId",
+		a.create_date AS "createDate",
+		a.del_status AS "delStatus",
+		a.upd_date AS "updDate",
+		a.yy_date AS "yyDate"
+	</sql>
+	
+	<sql id="yhEscortBeanJoins">
+	</sql>
+    
+	<select id="get" resultType="YhEscortBean">
+		SELECT 
+			<include refid="yhEscortBeanColumns"/>
+		FROM yh_escort a
+		<include refid="yhEscortBeanJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="YhEscortBean">
+		SELECT 
+			<include refid="yhEscortBeanColumns"/>
+		FROM yh_escort a
+		<include refid="yhEscortBeanJoins"/>
+		<where>
+			a.del_status = 0
+			<if test="name != null and name != ''">
+				AND a.name LIKE concat('%',#{name},'%')
+			</if>
+			<if test="idcard != null and idcard != ''">
+				AND a.idcard = #{idcard}
+			</if>
+			<if test="phone != null and phone != ''">
+				AND a.phone = #{phone}
+			</if>
+			<if test="cardNo != null and cardNo != ''">
+				AND a.card_no = #{cardNo}
+			</if>
+		</where>
+	</select>
+
+	<insert id="insert">
+		INSERT INTO yh_escort(
+			id,
+			name,
+			idcard,
+			phone,
+			card_no,
+			img_url,
+			bank_id,
+			create_date,
+			del_status,
+			upd_date,
+			yy_date
+		) VALUES (
+			#{id},
+			#{name},
+			#{idcard},
+			#{phone},
+			#{cardNo},
+			#{imgUrl},
+			#{bankId},
+			#{createDate},
+			#{delStatus},
+			#{updDate},
+			#{yyDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE yh_escort SET 	
+			name = #{name},
+			idcard = #{idcard},
+			phone = #{phone},
+			card_no = #{cardNo},
+			img_url = #{imgUrl},
+			bank_id = #{bankId},
+			del_status = #{delStatus},
+			upd_date = #{updDate},
+			yy_date = #{yyDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE yh_escort SET del_status = 1
+		WHERE id = #{id}
+	</update>
+
+	<update id="deleteAll">
+		UPDATE yh_escort SET del_status = 1;
+	</update>
+</mapper>
